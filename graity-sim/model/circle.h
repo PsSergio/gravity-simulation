@@ -13,9 +13,7 @@ class Circle{
   float centerx , centery, radius; 
   float mass;
   float velocity[2] = {0.0f, 0.0f};
-  float aceleration[2] = {0.0f, -10.0f};
-
-  bool changeYdir = false, changeXdir = false;
+  float aceleration[2] = {-5.0f, -10.0f};
 
   public:
 
@@ -29,23 +27,8 @@ class Circle{
     }
 
     void changePosition(){
-      
-      // if (!changeYdir){
-      //   tyInitial += 0.01f;
-      //   if(tyInitial >= tyFinal) changeYdir = true;
-      // }else{
-      //   tyInitial -= 0.01f;
-      //   if(tyInitial <= 0.0f) changeYdir = false;
-      // }
-
       centerx += velocity[0];
       centery += velocity[1];
-    
-      // centery = centeryInital - ( ( aceleration[1] * pow(tyInitial, 2) ) / 2 );
-      // centerx += 0.01;
-      // std::cout << "centery: " << centery << std::endl;
-      // std::cout << "tInital: " << tyInitial << std::endl;
-
     }
 
     void acelerate(){
@@ -55,15 +38,13 @@ class Circle{
         velocity[1] = -velocity[1];
 
       }
+      if(centerx+radius >= 1 || centerx-radius <= -1 ){
+        velocity[0] = -velocity[0];
+        aceleration[0] = 0;
+      }
 
       velocity[1] += aceleration[1]/9000;
-
-      
-
-      std::cout << "velocidade y: " << velocity[1] << std::endl;
-      std::cout << "centery: " << centery << std::endl; 
-
-      velocity[0] += aceleration[0]/10000;
+      velocity[0] += aceleration[0]/9000;
     }
 
 

@@ -19,7 +19,6 @@ float calculateCenterY(float timeMoment, float timeFinal, float _radius);
 const unsigned int SCR_WIDTH = 600;
 const unsigned int SCR_HEIGHT = 600; 
 float centery = 0.8f, centerx = 0.0f, radius = 0.1f; 
-float centeryBackup = centery, centerxBackup = centerx;
 
 int main()
 {
@@ -66,8 +65,8 @@ int main()
 
         myShader.use();
         circle.use();
-        circle.acelerate();
 
+        circle.acelerate();
         circle.changePosition();
        
         glfwSwapBuffers(window);
