@@ -14,10 +14,6 @@ class Circle{
   float mass;
   float velocity[2] = {0.0f, 0.0f};
   float aceleration[2] = {0.0f, -10.0f};
-  float centerxInitial, centeryInital;
-
-  float tyFinal, txFinal;
-  float tyInitial = 0.0f, txInitial = 0.0f;
 
   bool changeYdir = false, changeXdir = false;
 
@@ -28,12 +24,6 @@ class Circle{
       centerx = _centerx;
       centery = _centery;
       radius = _radius;
-
-      centerxInitial = centerx;
-      centeryInital = centery;
-
-      calculateTyFinal();
-      calculateTxFinal();
       setVertexs();
 
     }
@@ -196,17 +186,6 @@ class Circle{
         }
         aux++;
       }
-    }
-
-    void calculateTxFinal(){
-      txFinal = sqrt( pow(velocity[0], 2) + 2 * aceleration[0] * (centerx + 1 - radius) ) / aceleration[0];
-      std::cout << "txFinal: " << txFinal << std::endl;
-
-    }
-
-    void calculateTyFinal(){
-      tyFinal = sqrt( pow(velocity[1], 2) + 2 * aceleration[1] * (centery + 1 - radius) ) / aceleration[1];
-      // std::cout << "tyFinal: " << tyFinal << std::endl;
     }
 
 };
