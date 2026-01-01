@@ -66,11 +66,10 @@ int main()
 
         myShader.use();
         circle.use();
+        circle.acelerate();
 
         circle.changePosition();
-
-
-        
+       
         glfwSwapBuffers(window);
         glfwPollEvents();
     }

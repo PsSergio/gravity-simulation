@@ -13,13 +13,13 @@ class Circle{
   float centerx , centery, radius; 
   float mass;
   float velocity[2] = {0.0f, 0.0f};
-  float aceleration[2] = {0.0f, 10.0f};
+  float aceleration[2] = {0.0f, -10.0f};
   float centerxInitial, centeryInital;
 
-  float tFinal;
-  float tInitial = 0.0f;
+  float tyFinal, txFinal;
+  float tyInitial = 0.0f, txInitial = 0.0f;
 
-  bool changeYdir = false;
+  bool changeYdir = false, changeXdir = false;
 
   public:
 
@@ -32,30 +32,48 @@ class Circle{
       centerxInitial = centerx;
       centeryInital = centery;
 
+      calculateTyFinal();
+      calculateTxFinal();
       setVertexs();
 
-      tFinal = sqrt( pow(velocity[1], 2) + 2 * aceleration[1] * (centery + 1 - radius) ) / aceleration[1];
-
-      std::cout << "tFinal: " << tFinal << std::endl;
     }
 
     void changePosition(){
       
-      if (!changeYdir){
-        tInitial += 0.01f;
-        if(tInitial >= tFinal) changeYdir = true;
-      }else{
-        tInitial -= 0.01f;
-        if(tInitial <= 0.0f) changeYdir = false;
+      // if (!changeYdir){
+      //   tyInitial += 0.01f;
+      //   if(tyInitial >= tyFinal) changeYdir = true;
+      // }else{
+      //   tyInitial -= 0.01f;
+      //   if(tyInitial <= 0.0f) changeYdir = false;
+      // }
+
+      centerx += velocity[0];
+      centery += velocity[1];
+    
+      // centery = centeryInital - ( ( aceleration[1] * pow(tyInitial, 2) ) / 2 );
+      // centerx += 0.01;
+      // std::cout << "centery: " << centery << std::endl;
+      // std::cout << "tInital: " << tyInitial << std::endl;
+
+    }
+
+    void acelerate(){
+
+      if(centery-radius <= -1){
+
+        velocity[1] = -velocity[1];
+
       }
 
+      velocity[1] += aceleration[1]/9000;
 
+      
 
-      centery = centeryInital - ( ( aceleration[1] * pow(tInitial, 2) ) / 2 );
+      std::cout << "velocidade y: " << velocity[1] << std::endl;
+      std::cout << "centery: " << centery << std::endl; 
 
-      std::cout << "centery: " << centery << std::endl;
-      std::cout << "tInital: " << tInitial << std::endl;
-
+      velocity[0] += aceleration[0]/10000;
     }
 
 
@@ -178,6 +196,17 @@ class Circle{
         }
         aux++;
       }
+    }
+
+    void calculateTxFinal(){
+      txFinal = sqrt( pow(velocity[0], 2) + 2 * aceleration[0] * (centerx + 1 - radius) ) / aceleration[0];
+      std::cout << "txFinal: " << txFinal << std::endl;
+
+    }
+
+    void calculateTyFinal(){
+      tyFinal = sqrt( pow(velocity[1], 2) + 2 * aceleration[1] * (centery + 1 - radius) ) / aceleration[1];
+      // std::cout << "tyFinal: " << tyFinal << std::endl;
     }
 
 };
