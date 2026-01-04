@@ -5,7 +5,8 @@
 #include <cmath>
 #include <iostream>
 #include <iomanip>
-#include<time.h>
+#include <chrono>
+#include <thread>
 
 class Circle{
   unsigned int VAO, VBO, EBO;
@@ -13,7 +14,11 @@ class Circle{
   float centerx , centery, radius; 
   float mass;
   float velocity[2] = {0.0f, 0.0f};
-  float aceleration[2] = {-5.0f, -10.0f};
+  float aceleration[2] ={5.0f, 0.0f};
+  float constDesc = -0.95f;
+
+  std::chrono::high_resolution_clock::time_point timeInital, timeFinal; 
+  float tempoSec, tempoCalc;
 
   public:
 
@@ -23,29 +28,42 @@ class Circle{
       centery = _centery;
       radius = _radius;
       setVertexs();
+      timeInital = std::chrono::high_resolution_clock::now();
+      tempoCalc = sqrt( pow(velocity[1], 2) + 2 * 10.0f * (centery + 1 - radius)  * 10) / 10.0f;
+      aceleration[1] = - ( 2 * (centery + 1 - radius) / 900 ) / (tempoCalc * tempoCalc);
 
     }
 
     void changePosition(){
+      checkLimitsColision();
+      // std::cout << velocity[0] << std::endl;
+      
       centerx += velocity[0];
       centery += velocity[1];
+
+      // std::this_thread::sleep_for(std::chrono::seconds(1/10));    
     }
 
-    void acelerate(){
+    void acelerate(Circle* otherCircle){
 
-      if(centery-radius <= -1){
+      bool wasColisionResult = wasColision(otherCircle);
 
-        velocity[1] = -velocity[1];
+      // std::cout << "isX: " << checkColisionResult.isX << " | value: " << checkColisionResult.value << std::endl;
+      // std::cout << "wasColision: " << wasColisionResult << std::endl;
+
+      float constDescColisionCircles = -0.90f;
+      if(wasColisionResult){
+
+        velocity[1] *= constDescColisionCircles;
+        velocity[0] *= constDescColisionCircles;
 
       }
-      if(centerx+radius >= 1 || centerx-radius <= -1 ){
-        velocity[0] = -velocity[0];
-        aceleration[0] = 0;
-      }
 
-      velocity[1] += aceleration[1]/9000;
-      velocity[0] += aceleration[0]/9000;
+      velocity[1] += aceleration[1];
+      velocity[0] += aceleration[0]/10000;
+      
     }
+
 
 
 
@@ -166,6 +184,37 @@ class Circle{
           std::cout << "------------------------------------" << std::endl;
         }
         aux++;
+      }
+    }
+
+    bool wasColision(Circle* otherCircle){
+
+      if(otherCircle == nullptr) return false;  
+      
+      float centerxDif = (centerx - otherCircle->centerx), 
+      centeryDif = (centery - otherCircle->centery), 
+      radiusSum = radius + otherCircle->radius;
+
+      float distance = sqrt(centerxDif*centerxDif + centeryDif* centeryDif);
+
+      return distance <= radiusSum;
+      
+    }
+
+
+    void checkLimitsColision(){
+      if(centery-radius < -1) centery = -1 + radius;
+      if(centery+radius > 1) centery = 1 - radius;
+      if(centerx+radius > 1) centerx = 1 - radius;
+      if(centerx-radius < -1) centerx = -1 + radius;
+
+      if (centery-radius <= -1 || centery+radius >= 1 ) {
+        velocity[1]*=constDesc;
+      
+      }
+      if(centerx+radius >= 1 || centerx-radius <= -1) {
+        velocity[0]*=constDesc;
+        aceleration[0] = 0;
       }
     }
 

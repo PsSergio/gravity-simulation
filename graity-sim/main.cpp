@@ -53,7 +53,10 @@ int main()
         return -1;
     }
 
-    Circle circle(100, centerx, centery, radius);
+    Circle circle(100, 0, 0.8, 0.1);
+    Circle circle2(100, 0, 0.5, 0.1);
+    Circle circle3(100, -0.7, 0.4, 0.1);
+    Circle circles[] = {circle, circle2};
     Shader myShader("shader/src/shader.vs", "shader/src/shader.fs");
     
     while (!glfwWindowShouldClose(window))
@@ -64,11 +67,25 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         myShader.use();
-        circle.use();
 
-        circle.acelerate();
-        circle.changePosition();
-       
+        for(int i = 0; i < sizeof(circles)/sizeof(Circle); i++){
+
+            circles[i].use();
+            circles[i].changePosition();
+
+            
+            if(sizeof(circles)/sizeof(Circle) == 1)
+            {
+                circles[0].acelerate(nullptr);
+            }
+
+            for(int j = 0; j < sizeof(circles)/sizeof(Circle); j++){
+                if(j != i) circles[j].acelerate(&circles[i]);
+            }
+
+
+        }
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
@@ -77,6 +94,7 @@ int main()
     // ------------------------------------------------------------------------
     
     circle.deleteBuffers();
+    circle2.deleteBuffers();
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
