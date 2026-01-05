@@ -18,7 +18,6 @@ float calculateCenterY(float timeMoment, float timeFinal, float _radius);
 // settings
 const unsigned int SCR_WIDTH = 600;
 const unsigned int SCR_HEIGHT = 600; 
-float centery = 0.8f, centerx = 0.0f, radius = 0.1f; 
 
 int main()
 {
@@ -53,9 +52,9 @@ int main()
         return -1;
     }
 
-    Circle circle(100, 0, 0.8, 0.1);
-    Circle circle2(100, 0, 0.5, 0.1);
-    Circle circle3(100, -0.7, 0.4, 0.1);
+    Circle circle(100, 0, 0.0, 0.1, pow(10, 10));
+    Circle circle2(100, 0.9, 0.9, 0.02, pow(10, 4));
+    // Circle circle3(100, -0.7, 0.4, 0.1);
     Circle circles[] = {circle, circle2};
     Shader myShader("shader/src/shader.vs", "shader/src/shader.fs");
     
@@ -71,7 +70,6 @@ int main()
         for(int i = 0; i < sizeof(circles)/sizeof(Circle); i++){
 
             circles[i].use();
-            circles[i].changePosition();
 
             
             if(sizeof(circles)/sizeof(Circle) == 1)
@@ -83,6 +81,9 @@ int main()
                 if(j != i) circles[j].acelerate(&circles[i]);
             }
 
+            circles[i].changePosition();
+
+
 
         }
 
@@ -93,8 +94,9 @@ int main()
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
     
-    circle.deleteBuffers();
-    circle2.deleteBuffers();
+    for(int i = 0; i < sizeof(circles)/sizeof(Circle); i++)
+        circles[i].deleteBuffers();
+
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();

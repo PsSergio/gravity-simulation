@@ -12,30 +12,31 @@ class Circle{
   unsigned int VAO, VBO, EBO;
   int res;
   float centerx , centery, radius; 
-  float mass;
+  float mass = pow(10, 11);
   float velocity[2] = {0.0f, 0.0f};
-  float aceleration[2] ={5.0f, 0.0f};
+  float aceleration[2] ={0.0f, 0.0f};
   float constDesc = -0.95f;
+
+  float gravity;
 
   std::chrono::high_resolution_clock::time_point timeInital, timeFinal; 
   float tempoSec, tempoCalc;
 
   public:
 
-    Circle(int _res, float _centerx, float _centery, float _radius){
+    Circle(int _res, float _centerx, float _centery, float _radius, float _mass){
       res = _res;
       centerx = _centerx;
       centery = _centery;
       radius = _radius;
+      mass = _mass;
       setVertexs();
-      timeInital = std::chrono::high_resolution_clock::now();
-      tempoCalc = sqrt( pow(velocity[1], 2) + 2 * 10.0f * (centery + 1 - radius)  * 10) / 10.0f;
-      aceleration[1] = - ( 2 * (centery + 1 - radius) / 900 ) / (tempoCalc * tempoCalc);
 
+      timeInital = std::chrono::high_resolution_clock::now();
     }
 
     void changePosition(){
-      checkLimitsColision();
+      // checkLimitsColision();
       // std::cout << velocity[0] << std::endl;
       
       centerx += velocity[0];
@@ -46,10 +47,15 @@ class Circle{
 
     void acelerate(Circle* otherCircle){
 
+      if(otherCircle == nullptr) return;
+
       bool wasColisionResult = wasColision(otherCircle);
 
       // std::cout << "isX: " << checkColisionResult.isX << " | value: " << checkColisionResult.value << std::endl;
       // std::cout << "wasColision: " << wasColisionResult << std::endl;
+
+      calculateGravity(otherCircle);
+
 
       float constDescColisionCircles = -0.90f;
       if(wasColisionResult){
@@ -60,7 +66,7 @@ class Circle{
       }
 
       velocity[1] += aceleration[1];
-      velocity[0] += aceleration[0]/10000;
+      velocity[0] += aceleration[0];
       
     }
 
@@ -85,10 +91,39 @@ class Circle{
       glDeleteBuffers(1, &EBO);
     }
 
-    float calculateGForce(float otherMass, float distance){
+    void calculateGravity(Circle* otherCircle){
+      if(otherCircle == nullptr) return;
+
       float G = 6.67 * pow(10, -11);
 
-      return ( G * mass * otherMass ) / (distance * distance);
+      float distance = sqrt( pow(centerx - otherCircle->centerx, 2) + pow(centery - otherCircle->centery, 2) );
+
+      this->gravity = (G * otherCircle->mass) / pow(distance, 2) / 10000;
+
+      // tempoCalc = sqrt( pow(velocity[1], 2) + 2 * gravity * (centery + 1 - radius)  * 10) / gravity;
+      // aceleration[1] = ( 2 * (centery + 1 - radius) / 900 ) / (tempoCalc * tempoCalc);
+
+      if(centery > otherCircle->centery) {
+
+        std::cout << "aqui" << std::endl;
+        aceleration[1] = -gravity;
+      }else if(centery <= otherCircle->centery){
+        std::cout << "aqui2" << std::endl;
+
+        aceleration[1] = gravity;
+      } 
+
+      if(centerx > otherCircle->centerx){
+        aceleration[0] = -gravity/2;
+      } 
+      else if(centerx <= otherCircle->centerx){
+        aceleration[0] = gravity/2;
+      } 
+
+      // std::cout << "gravity: " <<gravity << std::endl;
+      // std::cout << "aceleracao: " <<  aceleration[1] << " | centery: " << centery << " | velocidade: " << velocity[1] << " | tempo: " << tempoCalc << std::endl;
+
+
     }
 
   private:
@@ -201,20 +236,18 @@ class Circle{
       
     }
 
-
     void checkLimitsColision(){
       if(centery-radius < -1) centery = -1 + radius;
       if(centery+radius > 1) centery = 1 - radius;
       if(centerx+radius > 1) centerx = 1 - radius;
       if(centerx-radius < -1) centerx = -1 + radius;
 
-      if (centery-radius <= -1 || centery+radius >= 1 ) {
+      if (centery+radius >= 1  || centery-radius <= -1 ) {
         velocity[1]*=constDesc;
       
       }
       if(centerx+radius >= 1 || centerx-radius <= -1) {
         velocity[0]*=constDesc;
-        aceleration[0] = 0;
       }
     }
 
