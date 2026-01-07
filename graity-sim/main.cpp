@@ -53,11 +53,12 @@ int main()
     }
 
     Circle circle(100, 0, 0.0, 0.1, pow(10, 10));
-    Circle circle2(100, 0.9, 0.9, 0.02, pow(10, 4));
+    Circle circle2(100, -0.5, 0.0, 0.02, pow(10, 4));
     // Circle circle3(100, -0.7, 0.4, 0.1);
     Circle circles[] = {circle, circle2};
     Shader myShader("shader/src/shader.vs", "shader/src/shader.fs");
-    
+    // circle2.calculateInitialVelocityToOrbity(&circle);
+    circles[1].calculateInitialVelocityToOrbity(&circles[0]);
     while (!glfwWindowShouldClose(window))
     {
         processInput(window);
@@ -71,6 +72,8 @@ int main()
 
             circles[i].use();
 
+            circles[i].changePosition();
+
             
             if(sizeof(circles)/sizeof(Circle) == 1)
             {
@@ -79,9 +82,9 @@ int main()
 
             for(int j = 0; j < sizeof(circles)/sizeof(Circle); j++){
                 if(j != i) circles[j].acelerate(&circles[i]);
+                
             }
 
-            circles[i].changePosition();
 
 
 

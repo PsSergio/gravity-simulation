@@ -13,16 +13,16 @@ class Circle{
   int res;
   float centerx , centery, radius; 
   float mass = pow(10, 11);
-  float velocity[2] = {0.0f, 0.0f};
   float aceleration[2] ={0.0f, 0.0f};
   float constDesc = -0.95f;
-
   float gravity;
 
   std::chrono::high_resolution_clock::time_point timeInital, timeFinal; 
   float tempoSec, tempoCalc;
 
   public:
+  float velocity[2] = {0.0f, 0.0f};
+
 
     Circle(int _res, float _centerx, float _centery, float _radius, float _mass){
       res = _res;
@@ -59,14 +59,17 @@ class Circle{
 
       float constDescColisionCircles = -0.90f;
       if(wasColisionResult){
-
+        std::cout << "colisao" << std::endl;
         velocity[1] *= constDescColisionCircles;
         velocity[0] *= constDescColisionCircles;
 
       }
 
+      std::cout << "aceleracao: " <<  aceleration[1] << " | velocidade: " << velocity[1] << std::endl;
+
       velocity[1] += aceleration[1];
       velocity[0] += aceleration[0];
+
       
     }
 
@@ -103,27 +106,39 @@ class Circle{
       // tempoCalc = sqrt( pow(velocity[1], 2) + 2 * gravity * (centery + 1 - radius)  * 10) / gravity;
       // aceleration[1] = ( 2 * (centery + 1 - radius) / 900 ) / (tempoCalc * tempoCalc);
 
+      float relY = (otherCircle->centery - centery)/distance;
+      float relX = (otherCircle->centerx - centerx)/distance;
+
       if(centery > otherCircle->centery) {
-
-        std::cout << "aqui" << std::endl;
-        aceleration[1] = -gravity;
+        aceleration[1] = -gravity*(-relY);
       }else if(centery <= otherCircle->centery){
-        std::cout << "aqui2" << std::endl;
-
-        aceleration[1] = gravity;
+        aceleration[1] = gravity*relY;
       } 
 
       if(centerx > otherCircle->centerx){
-        aceleration[0] = -gravity/2;
+        aceleration[0] = -gravity*(-relX);
       } 
       else if(centerx <= otherCircle->centerx){
-        aceleration[0] = gravity/2;
+        aceleration[0] = gravity*relX;
       } 
 
       // std::cout << "gravity: " <<gravity << std::endl;
-      // std::cout << "aceleracao: " <<  aceleration[1] << " | centery: " << centery << " | velocidade: " << velocity[1] << " | tempo: " << tempoCalc << std::endl;
+      // std::cout << "rely: " <<relY << "| relx: " << relX << std::endl;
 
 
+    }
+
+    void calculateInitialVelocityToOrbity(Circle* otherCircle){
+      if(otherCircle == nullptr) return;
+      float G = 6.67 * pow(10, -11);
+
+      float distance = sqrt( pow(centerx - otherCircle->centerx, 2) + pow(centery - otherCircle->centery, 2) );
+
+      this->velocity[1] = sqrt(G * otherCircle->mass/distance)/100;
+      // velocity[0] = sqrt(this->gravity*distance);
+
+      // std::cout << "velocidade: " << velocity[1] << std::endl;
+      
     }
 
   private:
