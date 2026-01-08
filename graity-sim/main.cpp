@@ -52,12 +52,18 @@ int main()
         return -1;
     }
 
-    Circle circle(100, 0, 0.0, 0.1, pow(10, 10));
-    Circle circle2(100, -0.5, 0.0, 0.02, pow(10, 4));
+    Circle circle(100, 0, 0.0, 0.1, pow(10, 11));
+    Circle circle2(100, 0.8, 0.0, 0.02, pow(10, 4));
+    Circle circle3(100, 0.6, 0.0, 0.02, pow(10, 4));
     // Circle circle3(100, -0.7, 0.4, 0.1);
-    Circle circles[] = {circle, circle2};
+    Circle circles[] = {circle, circle2, circle3};
     Shader myShader("shader/src/shader.vs", "shader/src/shader.fs");
     // circle2.calculateInitialVelocityToOrbity(&circle);
+
+    for(int i = 1; i < sizeof(circles)/sizeof(Circle); i++){
+        circles[i].calculateInitialVelocityToOrbity(&circles[0]);
+    }
+
     circles[1].calculateInitialVelocityToOrbity(&circles[0]);
     while (!glfwWindowShouldClose(window))
     {
@@ -86,7 +92,7 @@ int main()
             }
 
 
-
+      // std::this_thread::sleep_for(std::chrono::seconds(1/10));
 
         }
 

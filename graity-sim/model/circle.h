@@ -17,6 +17,8 @@ class Circle{
   float constDesc = -0.95f;
   float gravity;
 
+  float constToFixScale = pow(10, 5);
+
   std::chrono::high_resolution_clock::time_point timeInital, timeFinal; 
   float tempoSec, tempoCalc;
 
@@ -37,12 +39,10 @@ class Circle{
 
     void changePosition(){
       // checkLimitsColision();
-      // std::cout << velocity[0] << std::endl;
       
       centerx += velocity[0];
       centery += velocity[1];
-
-      // std::this_thread::sleep_for(std::chrono::seconds(1/10));    
+    
     }
 
     void acelerate(Circle* otherCircle){
@@ -62,7 +62,6 @@ class Circle{
         std::cout << "colisao" << std::endl;
         velocity[1] *= constDescColisionCircles;
         velocity[0] *= constDescColisionCircles;
-
       }
 
       std::cout << "aceleracao: " <<  aceleration[1] << " | velocidade: " << velocity[1] << std::endl;
@@ -101,10 +100,7 @@ class Circle{
 
       float distance = sqrt( pow(centerx - otherCircle->centerx, 2) + pow(centery - otherCircle->centery, 2) );
 
-      this->gravity = (G * otherCircle->mass) / pow(distance, 2) / 10000;
-
-      // tempoCalc = sqrt( pow(velocity[1], 2) + 2 * gravity * (centery + 1 - radius)  * 10) / gravity;
-      // aceleration[1] = ( 2 * (centery + 1 - radius) / 900 ) / (tempoCalc * tempoCalc);
+      this->gravity = (G * otherCircle->mass) / pow(distance, 2) / constToFixScale;
 
       float relY = (otherCircle->centery - centery)/distance;
       float relX = (otherCircle->centerx - centerx)/distance;
@@ -122,10 +118,6 @@ class Circle{
         aceleration[0] = gravity*relX;
       } 
 
-      // std::cout << "gravity: " <<gravity << std::endl;
-      // std::cout << "rely: " <<relY << "| relx: " << relX << std::endl;
-
-
     }
 
     void calculateInitialVelocityToOrbity(Circle* otherCircle){
@@ -134,10 +126,7 @@ class Circle{
 
       float distance = sqrt( pow(centerx - otherCircle->centerx, 2) + pow(centery - otherCircle->centery, 2) );
 
-      this->velocity[1] = sqrt(G * otherCircle->mass/distance)/100;
-      // velocity[0] = sqrt(this->gravity*distance);
-
-      // std::cout << "velocidade: " << velocity[1] << std::endl;
+      this->velocity[1] = sqrt(G * otherCircle->mass/distance)/sqrt(constToFixScale*2);
       
     }
 
@@ -146,8 +135,6 @@ class Circle{
       int count = 3;
       float angleRad = 2.0f * 3.14159265359 / res;
 
-      // std::cout << "angle: " << angleRad << std::endl;
-      
       int indices[res*3];
       
       float vertices[(res+1)*3];
@@ -168,16 +155,11 @@ class Circle{
         vertices[count+1] = y;
         vertices[count+2] = z;
 
-        // std::cout << "old coordinates: " << x << " " << y << std::endl;
-
         x = (cos(i*angleRad) * radius) + centerx;
         y = (sin(i*angleRad) * radius) + centery;
 
         count = count + 3;
 
-
-        // std::cout << "new coordinates: " << x << " " << y << std::endl;
-      
       }
 
       count = 0;
